@@ -99,14 +99,15 @@ namespace FootBallLeague.Controllers
                 var team1 = toUpdate.PlayedTeams.First();
                 var team2 = toUpdate.PlayedTeams.Last();
 
+                //if team scores stays the same update only the names if needed
                 if (match.MatchScore == toUpdate.MatchScore)
                 {
                     team1.Update(match.Team1, team1.Ranking);
                     team2.Update(match.Team2, team2.Ranking);
                 }
-                else
+                //if not: update everything aswell as team ratings (newScore - oldscore) for each team
+                else 
                 {
-
                     team1.UpdateGameOutcome(team2, toUpdate.MatchScore, match.MatchScore);
                 }
                 toUpdate.MatchScore = match.MatchScore;
