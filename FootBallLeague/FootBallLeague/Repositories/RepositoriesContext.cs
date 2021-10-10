@@ -24,10 +24,10 @@ namespace FootBallLeague.Repositories
 
         public ITeamRepository TeamRepository { get; private set; }
 
-        public void Save()
+        public async Task SaveAsync()
         {
             
-            db.SaveChanges();
+            await db.SaveChangesAsync();
         }
     }
 }

@@ -13,58 +13,38 @@ namespace FootBallLeague.Repositories
 {
     public class MatchRepository : Repository<Match>, IMatchRepository
     {
-        public MatchRepository(FootballLeageDbContext db)
+        private readonly FootballLeageDbContext db;
+        private readonly ITeamRepository teamRepository;
+
+        public MatchRepository(FootballLeageDbContext db, ITeamRepository teamRepository)
         : base(db)
         {
+            this.db = db;
+            this.teamRepository = teamRepository;
         }
 
-        public void CreateMatchFromDto(MatchDto match, Team[] teams)
+        public async Task CreateMatchFromDto(MatchDto match)
         {
-            try
-            {
-                Team team1 = null;
-                Team team2 = null;
+            var team1 = (await teamRepository
+                .FindByConditionAsync(x => x.TeamName == match.Team1))
+                .FirstOrDefault();
 
-                if (teams.Count() == 1)
-                {
-                    if (teams.First().TeamName == match.Team1)
-                    {
-                        team1 = teams.First();
-                        team2 = new Team() { TeamName = match.Team2 };
+            var team2 = (await teamRepository
+                .FindByConditionAsync(x => x.TeamName == match.Team1))
+                .FirstOrDefault();
 
-                    }
-                    else
-                    {
-                        team2 = teams.First();
-                        team1 = new Team() { TeamName = match.Team1 };
-                    }
-                }
-                else if (teams.Count() == 0)
-                {
-                    team1 = new Team() { TeamName = match.Team1 };
-                    team2 = new Team() { TeamName = match.Team2 };
-                }
-                else
-                {
-                    team1 = teams[0];
-                    team2 = teams[1];
+            team1 ??= new Team() { TeamName = team1.TeamName };
+            team2 ??= new Team() { TeamName = team2.TeamName };
 
-                }
-                var scores = team1.CalculateGameOutcome(team2, match.MatchScore);
-                team1.Ranking += (int)scores.team1;
-                team2.Ranking += (int)scores.team2;
-                var NewMatch = new Match();
-                NewMatch.PlayedTeams.Add(team1);
-                NewMatch.PlayedTeams.Add(team2);
-                NewMatch.MatchScore = match.MatchScore;
+            var scores = team1.CalculateGameOutcome(team2, match.MatchScore);
+            team1.Ranking += (int)scores.team1;
+            team2.Ranking += (int)scores.team2;
+            var NewMatch = new Match();
+            NewMatch.PlayedTeams.Add(team1);
+            NewMatch.PlayedTeams.Add(team2);
+            NewMatch.MatchScore = match.MatchScore;
 
-                this.Create(NewMatch);
-                
-            }
-            catch (ArgumentException e)
-            {
-                throw new ArgumentException(e.Message);
-            }
+            await this.CreateAsync(NewMatch);
         }
     }
 

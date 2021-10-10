@@ -8,10 +8,10 @@ namespace FootBallLeague.Repositories.Interfaces
 {
     public interface IRepository<T>
     {
-        IQueryable<T> FindAll();
-        IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression);
-        void Create(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<IQueryable<T>> FindAllAsync();
+        Task<IQueryable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression);
+        Task CreateAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
     }
 }

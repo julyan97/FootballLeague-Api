@@ -28,13 +28,13 @@ namespace FootBallLeague.Controllers
         /// <response code="200">Teams successfuly retrived</response>
         /// <response code="404">No Teams have been found</response>
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
 
-                return Ok(repositoriesContext.TeamRepository
-                    .FindAll()
+                return Ok((await repositoriesContext.TeamRepository
+                    .FindAllAsync())
                     .OrderBy(x => x.Ranking)
                     .ToList());
             }
@@ -51,13 +51,13 @@ namespace FootBallLeague.Controllers
         /// <response code="201">the requested Team has been created</response>
         /// <response code="400">We were unable to create the requested Team</response>
         [HttpPost]
-        public IActionResult Post(TeamDto team)
+        public async Task<IActionResult> Post(TeamDto team)
         {
             try
             {
                 var toCreate = team.CreateTeam();
-                repositoriesContext.TeamRepository.Create(toCreate);
-                repositoriesContext.Save();
+                await repositoriesContext.TeamRepository.CreateAsync(toCreate);
+                await repositoriesContext.SaveAsync();
                 return StatusCode(201);//Created
             }
             catch (ArgumentException e)
@@ -74,14 +74,16 @@ namespace FootBallLeague.Controllers
         /// <response code="200">Team successfully updated</response>
         /// <response code="400">Cannot find Teams with the given parameters</response>
         [HttpPut]
-        public IActionResult Put(Guid id, TeamDto team)
+        public async Task<IActionResult> Put(Guid id, TeamDto team)
         {
             try
             {
-                var toUpdate = repositoriesContext.TeamRepository.FindByCondition(x => x.Id == id).First();
+                var toUpdate = (await repositoriesContext.TeamRepository
+                    .FindByConditionAsync(x => x.Id == id))
+                    .FirstOrDefault();
                 toUpdate.Update(team);
-                repositoriesContext.TeamRepository.Update(toUpdate);
-                repositoriesContext.Save();
+                await repositoriesContext.TeamRepository.UpdateAsync(toUpdate);
+                await repositoriesContext.SaveAsync();
                 return Ok();
             }
             catch(ArgumentException e)
@@ -97,13 +99,15 @@ namespace FootBallLeague.Controllers
         /// <response code="200">Team successfully deleted</response>
         /// <response code="400">We were unable to delete the requested Team</response>
         [HttpDelete]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                var toDelete = repositoriesContext.TeamRepository.FindByCondition(x => x.Id == id).First();
-                repositoriesContext.TeamRepository.Delete(toDelete);
-                repositoriesContext.Save();
+                var toDelete = (await repositoriesContext.TeamRepository
+                    .FindByConditionAsync(x => x.Id == id))
+                    .FirstOrDefault();
+                await repositoriesContext .TeamRepository.DeleteAsync(toDelete);
+                await repositoriesContext.SaveAsync();
                 return Ok();
             }
             catch(ArgumentException e)

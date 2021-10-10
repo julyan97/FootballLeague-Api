@@ -9,7 +9,6 @@ namespace FootBallLeague.Repositories.Interfaces
 {
     public interface IMatchRepository : IRepository<Match>
     {
-        public void CreateMatchFromDto(MatchDto match, Team[] teams);
-       
+        Task CreateMatchFromDto(MatchDto match);
     }
 }

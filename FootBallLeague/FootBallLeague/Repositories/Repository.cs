@@ -17,25 +17,25 @@ namespace FootBallLeague.Repositories
         {
             this.repositoryContext = repositoryContext;
         }
-        public IQueryable<T> FindAll()
+        public async Task<IQueryable<T>> FindAllAsync()
         {
             //if you doesn't want to be tracked .AsNoTracking();
             return this.repositoryContext.Set<T>();
         }
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression)
+        public async Task<IQueryable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
         {
             //if you doesn't want to be tracked .AsNoTracking();
             return this.repositoryContext.Set<T>().Where(expression);
         }
-        public void Create(T entity)
+        public async Task CreateAsync(T entity)
         {
-            this.repositoryContext.Set<T>().Add(entity);
+            await this.repositoryContext.Set<T>().AddAsync(entity);
         }
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             this.repositoryContext.Set<T>().Update(entity);
         }
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             this.repositoryContext.Set<T>().Remove(entity);
         }
