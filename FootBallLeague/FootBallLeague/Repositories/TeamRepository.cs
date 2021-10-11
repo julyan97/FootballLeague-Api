@@ -27,7 +27,7 @@ namespace FootBallLeague.Repositories
                 Points = team.Points
             };
 
-            await UpdateAsync(newTeamEntity);
+            Update(newTeamEntity);
 
             return newTeamEntity;
         }
@@ -35,7 +35,7 @@ namespace FootBallLeague.Repositories
         public async Task DeleteTeamAsync(Guid teamId)
         {
             var existingTeamEntity = await TryFindEntityByIdAsync(teamId,true);
-            await DeleteAsync(existingTeamEntity);
+            Delete(existingTeamEntity);
         }
 
 

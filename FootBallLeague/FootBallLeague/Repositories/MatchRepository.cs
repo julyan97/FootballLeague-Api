@@ -77,7 +77,7 @@ namespace FootBallLeague.Repositories
                 : existingMatchEntity.AwayTeam;
 
             UpdateTeamPointsBasedOnMatch(newMatchEntity, newHomeTeam, newAwayTeam, PointsAction.Increment);
-            await UpdateAsync(newMatchEntity);
+            Update(newMatchEntity);
 
             return newMatchEntity;
         }
@@ -92,14 +92,9 @@ namespace FootBallLeague.Repositories
             matchEntity.AwayTeam = awayTeamEntity;
             UpdateTeamPointsBasedOnMatch(matchEntity, matchEntity.HomeTeam, matchEntity.AwayTeam, PointsAction.Rollback);
 
-            await DeleteAsync(matchEntity);
+            Delete(matchEntity);
         }
-        //        {
-        //  "homeTeamId": "bff6fb70-726a-44d2-1575-08d98c2d66ed",
-        //  "awayTeamId": "82bb55be-4d40-49a9-1576-08d98c2d66ed",
-        //  "goalsScoredByHomeTeam": 0,
-        //  "goalsScoredByAwayTeam": 3
-        //}
+
         private void UpdateTeamPointsBasedOnMatch(Match match, Team homeTeam, Team awayTeam, PointsAction action)
         {
             (int homeTeamPoints, int awayTeamPoints) = pointsService.CalculatePoints(match);

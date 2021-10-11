@@ -9,6 +9,10 @@ namespace FootBallLeague.Repositories.Interfaces
     {
         IMatchRepository MatchRepository { get; }
         ITeamRepository TeamRepository { get; }
+
+        /// <summary>
+        /// Saves and Updates the database if any changes have been made
+        /// </summary>
         Task SaveAsync();
     }
 }

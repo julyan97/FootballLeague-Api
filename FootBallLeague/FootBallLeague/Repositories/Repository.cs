@@ -51,11 +51,11 @@ namespace FootBallLeague.Repositories
         {
             await this.repositoryContext.Set<TEntity>().AddAsync(entity);
         }
-        public async Task UpdateAsync(TEntity entity)
+        public void Update(TEntity entity)
         {
             this.repositoryContext.Set<TEntity>().Update(entity);
         }
-        public async Task DeleteAsync(TEntity entity)
+        public void Delete(TEntity entity)
         {
             this.repositoryContext.Set<TEntity>().Remove(entity);
         }

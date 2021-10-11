@@ -24,10 +24,9 @@ namespace FootBallLeague.Controllers
             this.repositoriesContext = repositoriesContext;
         }
         /// <summary>
-        /// Retrieves a collection with all Team objects
+        /// Retrieves a collection with all Team objects order by asc based on their points
         /// </summary>
         /// <response code="200">Teams successfuly retrived</response>
-        /// <response code="404">No Teams have been found</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -35,15 +34,15 @@ namespace FootBallLeague.Controllers
             return Ok(result
                 .Include(x=>x.PlayedMatchesAsHomeTeam)
                 .Include(x=>x.PlayedMatchesAsAwayTeam)
+                .OrderBy(x=>x.Points)
                 .ToList());
         }
 
         /// <summary>
         /// Creates a Team object
         /// </summary>
-        /// <param name="teamDto">Team to create</param>
+        /// <param name="teamDto">Dto representing the team we want to create</param>
         /// <response code="201">the requested Team has been created</response>
-        /// <response code="400">We were unable to create the requested Team</response>
         [HttpPost]
         public async Task<IActionResult> Post(TeamDto teamDto)
         {
@@ -82,7 +81,7 @@ namespace FootBallLeague.Controllers
         /// <summary>
         /// Deletes an existing Team object
         /// </summary>
-        /// <param name="teamDto">Based team to delete an existing Team</param>
+        /// <param name="id">Id of an existing team/param>
         /// <response code="200">Team successfully deleted</response>
         /// <response code="400">We were unable to delete the requested Team</response>
         [HttpDelete]

@@ -29,7 +29,6 @@ namespace FootBallLeague.Controllers
         /// Retrieves a collection with all Match objects
         /// </summary>
         /// <response code="200">FootBall Matches successfuly retrived</response>
-        /// <response code="404">No Matches have been found</response>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -42,11 +41,8 @@ namespace FootBallLeague.Controllers
 
         /// <summary>
         /// Creates a Team object from Dto.
-        /// Dto format should be as follows:
-        /// Team1: string, Team2: string, MatchScore: string
-        /// example: Levski, CSKA, 3-0
         /// </summary>
-        /// <param name="team">Match to create</param>
+        /// <param name="team">Dto object representing the Match we want to create to create</param>
         /// <response code="201">the requested Match has been created</response>
         /// <response code="400">We were unable to create the requested Match</response>
         [HttpPost]
@@ -65,7 +61,7 @@ namespace FootBallLeague.Controllers
         /// Update an existing Match object
         /// </summary>
         /// <param name="id">Id of an existing Match to update</param>
-        /// <param name="match">Dto with required info to update</param>
+        /// <param name="match">Dto representing the Match we want o create</param>
         /// <response code="200">Match successfully updated</response>
         /// <response code="400">Cannot find Match with the given id</response>
         [HttpPut]
