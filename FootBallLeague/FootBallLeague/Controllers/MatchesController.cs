@@ -52,18 +52,11 @@ namespace FootBallLeague.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(MatchDto match)
         {
-            try
-            {
                 var result = await repositoriesContext.MatchRepository
                     .InsertMatchEntityAndUpdateTeamPointsAsync(match);
                 await repositoriesContext.SaveAsync();
 
                 return StatusCode(201, result);//Created
-            }
-            catch(ArgumentException e)
-            {
-                return BadRequest(e);
-            }
         }
 
 
@@ -88,7 +81,7 @@ namespace FootBallLeague.Controllers
             }
             catch(ArgumentException e)
             {
-                return NotFound(e);
+                return BadRequest(e);
             }
         }
 
