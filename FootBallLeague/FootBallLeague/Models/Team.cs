@@ -7,33 +7,13 @@ using System.Threading.Tasks;
 
 namespace FootBallLeague.Models
 {
-    public class Team : Base<Guid>
+    public class Team : BaseEntity<Guid>
     {
-        public string TeamName { get; set; }
-        public double Ranking { get; set; }
+        public string Name { get; set; }
+        public int Points { get; set; }
         [JsonIgnore]
-        public ICollection<Match> PlayedMatches { get; set; } = new List<Match>();
-
-        public Team()
-        {
-
-        }
-        public Team(Team toCopy)
-        {
-            this.Ranking = toCopy.Ranking;
-            this.PlayedMatches = this.PlayedMatches;
-        }
-
-        public void Update(TeamDto toUpdate)
-        {
-            TeamName = toUpdate.TeamName;
-            Ranking = toUpdate.Ranking;
-        }
-
-        public void Update(string name, double ranking)
-        {
-            TeamName = name;
-            Ranking = ranking;
-        }
+        public ICollection<Match> PlayedMatchesAsHomeTeam { get; set; }
+        [JsonIgnore]
+        public ICollection<Match> PlayedMatchesAsAwayTeam { get; set; }
     }
 }

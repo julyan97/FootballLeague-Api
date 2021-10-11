@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace FootBallLeague.Models
 {
-    public class Match : Base<Guid>
+    public class Match : BaseEntity<Guid>
     {
-        public ICollection<Team> PlayedTeams { get; set; } = new List<Team>();
-        public string MatchScore { get; set; }
+        public Guid HomeTeamId { get; set; }
+        public Team HomeTeam { get; set; }
+        public Guid AwayTeamId { get; set; }
+        public Team AwayTeam { get; set; }
+        public int GoalsScoredByHomeTeam { get; set; }
+        public int GoalsScoredByAwayTeam { get; set; }
 
     }
 }

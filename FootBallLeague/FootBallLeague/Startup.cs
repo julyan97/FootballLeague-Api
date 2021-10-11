@@ -1,6 +1,7 @@
 using FootBallLeague.Data;
 using FootBallLeague.Repositories;
 using FootBallLeague.Repositories.Interfaces;
+using FootBallLeague.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,8 +43,7 @@ namespace FootBallLeague
             services.AddScoped<IMatchRepository, MatchRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IRepositoriesContext, RepositoriesContext>();
-         
-
+            services.AddScoped<IPointsService, PointsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

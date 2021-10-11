@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootBallLeague.Migrations
 {
     [DbContext(typeof(FootballLeageDbContext))]
-    [Migration("20211008152937_initial")]
-    partial class initial
+    [Migration("20211010194143_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,10 +27,23 @@ namespace FootBallLeague.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MatchScore")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("AwayTeamId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("GoalsScoredByAwayTeam")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GoalsScoredByHomeTeam")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("HomeTeamId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AwayTeamId");
+
+                    b.HasIndex("HomeTeamId");
 
                     b.ToTable("Matches");
                 });
@@ -41,45 +54,41 @@ namespace FootBallLeague.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("Ranking")
-                        .HasColumnType("float");
-
-                    b.Property<string>("TeamName")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("MatchTeam", b =>
+            modelBuilder.Entity("FootBallLeague.Models.Match", b =>
                 {
-                    b.Property<Guid>("PlayedMatchesId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("FootBallLeague.Models.Team", "AwayTeam")
+                        .WithMany("PlayedMatchesAsAwayTeam")
+                        .HasForeignKey("AwayTeamId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    b.Property<Guid>("PlayedTeamsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasOne("FootBallLeague.Models.Team", "HomeTeam")
+                        .WithMany("PlayedMatchesAsHomeTeam")
+                        .HasForeignKey("HomeTeamId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    b.HasKey("PlayedMatchesId", "PlayedTeamsId");
+                    b.Navigation("AwayTeam");
 
-                    b.HasIndex("PlayedTeamsId");
-
-                    b.ToTable("MatchTeam");
+                    b.Navigation("HomeTeam");
                 });
 
-            modelBuilder.Entity("MatchTeam", b =>
+            modelBuilder.Entity("FootBallLeague.Models.Team", b =>
                 {
-                    b.HasOne("FootBallLeague.Models.Match", null)
-                        .WithMany()
-                        .HasForeignKey("PlayedMatchesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("PlayedMatchesAsAwayTeam");
 
-                    b.HasOne("FootBallLeague.Models.Team", null)
-                        .WithMany()
-                        .HasForeignKey("PlayedTeamsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("PlayedMatchesAsHomeTeam");
                 });
 #pragma warning restore 612, 618
         }

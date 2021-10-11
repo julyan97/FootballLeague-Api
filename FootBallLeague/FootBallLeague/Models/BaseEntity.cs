@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FootBallLeague.Models
 {
-    public class Base<T>
+    public class BaseEntity<TKey>
     {
         [Key]
-        public T Id { get; set; }
+        public TKey Id { get; set; }
     }
 }

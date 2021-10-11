@@ -1,4 +1,5 @@
 ﻿using FootBallLeague.Data;
+using FootBallLeague.Models;
 using FootBallLeague.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FootBallLeague.Repositories
 {
-    public abstract class Repository<T> : IRepository<T> where T : class
+    public abstract class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
         private readonly FootballLeageDbContext repositoryContext;
 
@@ -17,27 +18,46 @@ namespace FootBallLeague.Repositories
         {
             this.repositoryContext = repositoryContext;
         }
-        public async Task<IQueryable<T>> FindAllAsync()
+        public async Task<IQueryable<TEntity>> FindAllAsync()
         {
             //if you doesn't want to be tracked .AsNoTracking();
-            return this.repositoryContext.Set<T>();
+            return this.repositoryContext.Set<TEntity>();
         }
-        public async Task<IQueryable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
+        public async Task<IQueryable<TEntity>> FindByConditionAsync(Expression<Func<TEntity, bool>> expression)
         {
             //if you doesn't want to be tracked .AsNoTracking();
-            return this.repositoryContext.Set<T>().Where(expression);
+            return this.repositoryContext.Set<TEntity>().Where(expression);
         }
-        public async Task CreateAsync(T entity)
+        public async Task<TEntity> TryFindEntityByIdAsync(TKey id, bool tracked = false)
         {
-            await this.repositoryContext.Set<T>().AddAsync(entity);
+            TEntity entity = null;
+            if (tracked)
+            {
+                entity = (await FindByConditionAsync(x => x.Id.Equals(id)))
+                .AsNoTracking()
+                .FirstOrDefault();
+            }
+            else
+            {
+                entity = (await FindByConditionAsync(x => x.Id.Equals(id)))
+                .FirstOrDefault();
+            }
+
+            if (entity == null)
+                throw new ArgumentException($"No {nameof(TEntity)} with Id {id} exists");
+            return entity;
         }
-        public async Task UpdateAsync(T entity)
+        public async Task CreateAsync(TEntity entity)
         {
-            this.repositoryContext.Set<T>().Update(entity);
+            await this.repositoryContext.Set<TEntity>().AddAsync(entity);
         }
-        public async Task DeleteAsync(T entity)
+        public async Task UpdateAsync(TEntity entity)
         {
-            this.repositoryContext.Set<T>().Remove(entity);
+            this.repositoryContext.Set<TEntity>().Update(entity);
+        }
+        public async Task DeleteAsync(TEntity entity)
+        {
+            this.repositoryContext.Set<TEntity>().Remove(entity);
         }
     }
 }

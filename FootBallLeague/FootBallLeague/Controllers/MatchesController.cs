@@ -33,17 +33,11 @@ namespace FootBallLeague.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                var entitiesToReturn = await repositoriesContext.MatchRepository.FindAllAsync();
-                return  Ok( entitiesToReturn
-                    .Include(x => x.PlayedTeams)
-                    .ToList()) ;
-            }
-            catch (ArgumentException e)
-            {
-                return NotFound(e);
-            }
+            var result = await repositoriesContext.MatchRepository.FindAllAsync();
+            return Ok(result
+                .Include(x => x.HomeTeam)
+                .Include(x => x.AwayTeam)
+                .ToList());
         }
 
         /// <summary>
@@ -60,18 +54,15 @@ namespace FootBallLeague.Controllers
         {
             try
             {
-                //var teams = await repositoriesContext.TeamRepository
-                //  .FindByConditionAsync(x => x.TeamName == match.Team1 || x.TeamName == match.Team2);
-                //repositoriesContext.MatchRepository.CreateMatchFromDto(match, await teams.ToArrayAsync());
-
-
+                var result = await repositoriesContext.MatchRepository
+                    .InsertMatchEntityAndUpdateTeamPointsAsync(match);
                 await repositoriesContext.SaveAsync();
 
-                return StatusCode(201);//Created
+                return StatusCode(201, result);//Created
             }
-            catch
+            catch(ArgumentException e)
             {
-                return NotFound();
+                return BadRequest(e);
             }
         }
 
@@ -85,39 +76,19 @@ namespace FootBallLeague.Controllers
         /// <response code="200">Match successfully updated</response>
         /// <response code="400">Cannot find Match with the given id</response>
         [HttpPut]
-        public async Task<IActionResult> Put(Guid id, MatchDto match)
+        public async Task<IActionResult> Put(Guid matchId, MatchDto match)
         {
-
             try
             {
-                var toUpdate = (await repositoriesContext.MatchRepository
-                    .FindByConditionAsync(x => x.Id == id))
-                    .Include(x => x.PlayedTeams)
-                    .First();
-
-                
-                var team1 = toUpdate.PlayedTeams.FirstOrDefault();
-                var team2 = toUpdate.PlayedTeams.LastOrDefault();
-
-                //if team scores stays the same, update only the names if needed
-                if (match.MatchScore == toUpdate.MatchScore)
-                {
-                    team1.Update(match.Team1, team1.Ranking);
-                    team2.Update(match.Team2, team2.Ranking);
-                }
-                //if not: update everything aswell as team ratings (newScore - oldscore) for each team
-                else 
-                {
-                    team1.UpdateGameOutcome(team2, toUpdate.MatchScore, match.MatchScore);
-                }
-                toUpdate.MatchScore = match.MatchScore;
+                var result = await repositoriesContext.MatchRepository
+                    .UpdateMatchEntityAndUpdateTeamPointsAsync(matchId, match);
                 await repositoriesContext.SaveAsync();
-                return Ok();
 
+                return Ok(result);
             }
-            catch
+            catch(ArgumentException e)
             {
-                return NotFound();
+                return NotFound(e);
             }
         }
 
@@ -128,16 +99,13 @@ namespace FootBallLeague.Controllers
         /// <response code="200">Match successfully deleted</response>
         /// <response code="400">We were unable to delete the requested Match</response>
         [HttpDelete]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid matchId)
         {
             try
             {
-                var toDelete = (await repositoriesContext.MatchRepository
-                    .FindByConditionAsync(x => x.Id == id))
-                    .First();
-
-                await repositoriesContext.MatchRepository.DeleteAsync(toDelete);
+                await repositoriesContext.MatchRepository.DeleteEntityAndUpdatePointsAsync(matchId);
                 await repositoriesContext.SaveAsync();
+
                 return Ok();
             }
             catch (ArgumentException e)

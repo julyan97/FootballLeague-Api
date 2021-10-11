@@ -34,8 +34,8 @@ namespace FootBallLeague.Extenssions
             var addToTeam1 = newScores.team1 - prevScores.team1;
             var addToTeam2 = newScores.team2 - prevScores.team2;
 
-            team1.Ranking += addToTeam1;
-            team2.Ranking += addToTeam2;
+         //   team1.Ranking += addToTeam1;
+         //  team2.Ranking += addToTeam2;
         }
     }
 }

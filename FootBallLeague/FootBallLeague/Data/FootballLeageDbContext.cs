@@ -16,5 +16,21 @@ namespace FootBallLeague.Data
     : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Team>(x=>
+            {
+                x.HasMany(m => m.PlayedMatchesAsAwayTeam)
+                .WithOne(al => al.AwayTeam)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                x.HasMany(m => m.PlayedMatchesAsHomeTeam)
+                .WithOne(ht => ht.HomeTeam)
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            });
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

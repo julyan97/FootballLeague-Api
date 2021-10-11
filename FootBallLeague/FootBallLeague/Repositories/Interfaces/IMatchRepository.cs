@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace FootBallLeague.Repositories.Interfaces
 {
-    public interface IMatchRepository : IRepository<Match>
+    public interface IMatchRepository : IRepository<Match, Guid>
     {
-        Task CreateMatchFromDto(MatchDto match);
+        Task<Match> InsertMatchEntityAndUpdateTeamPointsAsync(MatchDto match);
+        Task<Match> UpdateMatchEntityAndUpdateTeamPointsAsync(Guid matchId, MatchDto match);
+        Task DeleteEntityAndUpdatePointsAsync(Guid matchId);
     }
 }

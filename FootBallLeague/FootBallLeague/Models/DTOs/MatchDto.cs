@@ -7,8 +7,9 @@ namespace FootBallLeague.Models.DTOs
 {
     public class MatchDto
     {
-        public string Team1 { get; set; }
-        public string Team2 { get; set; }
-        public string MatchScore { get; set; }
+        public Guid HomeTeamId { get; set; }
+        public Guid AwayTeamId { get; set; }
+        public int GoalsScoredByHomeTeam { get; set; }
+        public int GoalsScoredByAwayTeam { get; set; }
     }
 }
